@@ -1,61 +1,83 @@
 
 public class LinkedListQueue
 {
-	private Node first,last;
+	// Declares a private object Node with first and last name 
+	private Node firstName,lastName;
+	// Constructor for initializing the Nodes first name and last name
+	// Takes in no parameters
 	public LinkedListQueue()
 	{
-		first = null;
-		last = null;
+		firstName = null;
+		lastName = null;
 	}
+	// Declares public boolean is Empty to show if the node is empty
+	// Takes in no parameters
+	// returns firstName boolean
 	public boolean isEmpty()
 	{
-	return first == null;
+	return firstName == null;
 	}
-	
-	void add(String data)
+	// Declares add method to create a new node to form a linked list
+	// Takes in parameters of an object person defined at info
+	// creates a node if boolean is empty comes out as true
+	// otherwise takes in next last name 
+	// returns nothing
+	void add(Person info)
 	{
-		Node n = new Node(data);
+		Node node = new Node(info);
 		if(isEmpty())
 		{
-			first = last = n;
+			firstName = lastName = node;
 		}
 		else
 		{
-		last.next = n;
-		last = n;
+		lastName.next = node;
+		lastName = node;
 		}
 	}
+	// Declares queue size method for retrieving the size of the linked list or how many nodes there are
+	// Declares a local integer defined as size at 0
+	// Declares a local node defined as first Name 
+	// Utilizes while loop to increase size every time there is another node
+	// returns the size integer
+	// takes no parameter
 	public int queueSize()
 	{
 		int size = 0; 
-		Node n = first;
-		while(n!=null)
+		Node node = firstName;
+		while(node!=null)
 		{
 			size++;
-			n = n.next;
+			node = node.next;
 		}
 		return size;
 	}
-	public String remove()
+	// Declares a method remove to remove names from the queue of nodes
+	// takes no parameter
+	// Utilizes if statements to set first and last name to null if they are already not null
+	// returns the string defined at the person node
+	public Person remove()
 	{
 		if(isEmpty()) 
 		{
-		return null;
+			return null;
 		}
 		else
 		{
-		String s = first.data;
-		first = first.next;
-		if(first == null)
-		{
-		last = null;
-		}
-		return s;
+			Person string = firstName.info;
+			firstName = firstName.next;
+			if(firstName == null)
+			{
+				lastName = null;
+			}
+			return string;
 		}
 	}
-	
-
-	public String peek()
+	// Declares a method peek to show who is next on the queue
+	// takes no parameter
+	// Utilizes if statement to return the first name of the next node available if node is not empty
+	// returns the first name of the next person object
+	public Person peek()
 	{
 		if(isEmpty())
 		{
@@ -63,23 +85,47 @@ public class LinkedListQueue
 		}
 		else
 		{
-			return first.data;
+			return firstName.info;
 		}
 	}
+	// @Overrride method for making the linked list of nodes readable for the console
+	// Declares an empty string defined as string
+	// Declares an node filled with first name defined as node
+	// Utilizes if and while statements to add nodes to a string every time if doesn't return null
+	// takes no parameter
+	// returns the final string
 	public String toString()
 	{
-		String s = "";
-		Node n = first;
-		if(n!=null)
+		String string = "";
+		Node node = firstName;
+		if(node!=null)
 		{
-			s += ","+n.data;
-			n = n.next;
-			while(n!=null) {
-				s += "," + n.data;
-				n = n.next;
+			string += " "+node.info;
+			node = node.next;
+			while(node!=null) {
+				string += "\n" + node.info;
+				node = node.next;
 			}
 		}
-		return s;
+		return string;
 	}
 	
 }
+// Created class for Node or tracking in the linked list
+public class Node
+{
+	// public object person defined as info
+	public Person info;
+	// public object Node defined as next
+	public Node next;
+	// Node constructor that takes parameter object Person defined at info
+	// Initializes info as this info as itself
+	// Initializes Node object next as null or nothing
+	Node(Person info)
+	{
+		this.info = info;
+		this.next = null;
+	}
+}
+
+	
