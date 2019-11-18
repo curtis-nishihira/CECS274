@@ -1,0 +1,85 @@
+
+public class LinkedListQueue
+{
+	private Node first,last;
+	public LinkedListQueue()
+	{
+		first = null;
+		last = null;
+	}
+	public boolean isEmpty()
+	{
+	return first == null;
+	}
+	
+	void add(String data)
+	{
+		Node n = new Node(data);
+		if(isEmpty())
+		{
+			first = last = n;
+		}
+		else
+		{
+		last.next = n;
+		last = n;
+		}
+	}
+	public int queueSize()
+	{
+		int size = 0; 
+		Node n = first;
+		while(n!=null)
+		{
+			size++;
+			n = n.next;
+		}
+		return size;
+	}
+	public String remove()
+	{
+		if(isEmpty()) 
+		{
+		return null;
+		}
+		else
+		{
+		String s = first.data;
+		first = first.next;
+		if(first == null)
+		{
+		last = null;
+		}
+		return s;
+		}
+	}
+	
+
+	public String peek()
+	{
+		if(isEmpty())
+		{
+			return null;
+		}
+		else
+		{
+			return first.data;
+		}
+	}
+	public String toString()
+	{
+		String s = "";
+		Node n = first;
+		if(n!=null)
+		{
+			s += ","+n.data;
+			n = n.next;
+			while(n!=null) {
+				s += "," + n.data;
+				n = n.next;
+			}
+		}
+		return s;
+	}
+	
+}
