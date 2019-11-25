@@ -1,212 +1,29 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Scanner;
-import java.util.List;
-
-import java.util.ArrayList; 
-import java.util.LinkedList; 
-import java.util.List; 
-  
-public class chimps { 
-	static class graph{
-		
-	}
-      
-    private final int V; 
-    private final List<List<Integer>> adj; 
-  
-    public chimps(int V)  
-    { 
-        this.V = V; 
-        adj = new ArrayList<>(V); 
-          
-        for (int i = 0; i < V; i++) 
-            adj.add(new LinkedList<>()); 
-    } 
-      
-    // This function is a variation of DFSUytil() in  
-    // https://www.geeksforgeeks.org/archives/18212 
-    private boolean isCyclicUtil(int i, boolean[] visited, 
-                                      boolean[] recStack)  
-    { 
-          
-        // Mark the current node as visited and 
-        // part of recursion stack 
-        if (recStack[i]) 
-        {
-        	//System.out.println(i);
-        	return true;
-        }
-  
-        if (visited[i])
-        {
-            return false;
-        }
-              
-        visited[i] = true; 
-  
-        recStack[i] = true; 
-        List<Integer> children = adj.get(i); 
-          
-        for (Integer c: children)
-        {
-            if (isCyclicUtil(c, visited, recStack))
-            {
-                //System.out.println(c);
-            	return true;
-            }
-        }
-                  
-        recStack[i] = false; 
-  
-        return false; 
-    } 
-  
-    private void add(int source, int dest) { 
-        adj.get(source).add(dest); 
-    } 
-  
-    // Returns true if the graph contains a  
-    // cycle, else false. 
-    // This function is a variation of DFS() in  
-    // https://www.geeksforgeeks.org/archives/18212 
-    private boolean isCyclic()  
-    { 
-          
-        // Mark all the vertices as not visited and 
-        // not part of recursion stack 
-        boolean[] visited = new boolean[V]; 
-        boolean[] recStack = new boolean[V]; 
-          
-          
-        // Call the recursive helper function to 
-        // detect cycle in different DFS trees 
-        for (int i = 0; i < V; i++) 
-            if (isCyclicUtil(i, visited, recStack))
-            {
-            	System.out.println(i);
-            	System.out.println(Arrays.toString(visited));
-            	System.out.println(Arrays.toString(recStack));
-            	
-            	return true;
-            }
-  
-        return false; 
-    } 
-
-    public static ArrayList<String> input() 
-	{
-		ArrayList<String> list1 = new ArrayList<String>();
-
-		File file = new File ("input.txt");
-		try 
-		{
-			Scanner scan = new Scanner(file);
-			while(scan.hasNextLine())
-			{
-	    		list1.add(scan.nextLine());
-	    	}
-			scan.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return list1;
-	}
-	
-	public static void output(ArrayList<Integer> array)
-	{
-		File file = new File("output.txt");
-		FileOutputStream stream = null;
-		try {
-			stream = new FileOutputStream(file);
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
-		PrintWriter writer = new PrintWriter(stream);
-		for(int i = 0; i<array.size();i++)
-		{
-			writer.println(array.get(i));
-		}
-		writer.close();
-		try {
-			stream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	public static ArrayList<Integer> format()
-	{
-		ArrayList<String> string = input();
-		ArrayList<Integer> numberList = new ArrayList<Integer>();
-		for(int i = 1; i<string.size();i++) {
-			String test = string.get(i);
-			String numbers[] = test.split(",");
-			numberList.add(Integer.parseInt(numbers[0]));
-			numberList.add(Integer.parseInt(numbers[1]));
-			
-		}
-		return numberList;
-	}
-	  
-    public static void main(String args[]) 
-    { 
-       ArrayList<Integer> inst = format();
-       ArrayList<Integer> answer = new ArrayList<Integer>();
-       int edgeCount = Integer.parseInt(input().get(0));
-       chimps g = new chimps(edgeCount+1); 
-       for(int i = 1; i<inst.size();i+=2)
-       {
-    		g.add(inst.get(i-1), inst.get(i));
-       }
-  
-        /*for(int i = 1; i<=edgeCount;i++)
-    	{
-    		g.search(i);
-    		if(i == alpha) 
-    		{
-    			answer.add(alpha);
-    		}
-    		
-    	}*/
-       if(g.isCyclic()) 
-           System.out.println("Graph contains cycle"); 
-       else
-           System.out.println("Graph doesn't "
-                                   + "contain cycle");
-       output(answer);
-       System.out.println(answer);
-    } 
-
-	
-	
-}
 package tester;
 
-//Java program to print BFS traversal from a given source vertex. 
-//BFS(int s) traverses vertices reachable from s. 
-import java.io.*; 
-import java.util.*; 
-
-//This class represents a directed graph using adjacency list 
-//representation 
-class test 
-{ 
-	public static int startingPoint = 0;
-    private int V;   // No. of vertices 
-    public static boolean isAlpha;
-    public static boolean isanswer;
-    public static ArrayList<String> done = new ArrayList<String>();
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner; 
   
+// A directed graph using 
+// adjacency list representation 
+public class test {
+	public int temp;
+	private int V;   // No. of vertices
+	public static int edgeCount=Integer.parseInt(input().get(0));
+	public static int counter1= 0;
+	public static int counter2 = 0;
+	public static int start = 0;
+	static int [][] arr = new int[edgeCount+1][edgeCount];
+	public static ArrayList<Integer> global = new ArrayList<Integer>();
+	  
     // Array  of lists for Adjacency List Representation 
     private LinkedList<Integer> adj[]; 
-    public static ArrayList<Integer> nodes = new ArrayList<Integer>();
   
     // Constructor 
     test(int v) 
@@ -218,85 +35,71 @@ class test
     } 
   
     //Function to add an edge into the graph 
-    void add(int v, int w) 
+    void addEdge(int v, int w) 
     { 
         adj[v].add(w);  // Add w to v's list. 
-        nodes.add(v);        
     } 
   
     // A function used by DFS 
-    void DFSUtil(int v,boolean visited[]) 
+    void DFSUtil(int v,boolean visited[],boolean alphaVisit[], int [] checkList) 
     { 
-    	// Mark the current node as visited and print it
-    	
+        // Mark the current node as visited and print it 
     	visited[v] = true;
-    	if(isAlpha) {
-    		done.add("true current: "+v);
-    		System.out.println(v+":"+true);
-    	}
-    	else {
-    		done.add("false current: "+v);
-    		System.out.println(v+":"+false);
-    	}
-        System.out.println("visited "+v);
-        System.out.println("-------------------------------------");
+    	//System.out.println("visited: "+v);
+        temp = v;
+        arr[counter1][counter2] = v;
+        counter2++;
+        //}
   
-        // Recur for all the vertices adjacent to this vertex
-        //int n = 0;
-        Iterator<Integer> i = adj[v].listIterator();
-        System.out.println("adjacency: "+adj[v].toString());
+        // Recur for all the vertices adjacent to this vertex 
+        Iterator<Integer> i = adj[v].listIterator(); 
         while (i.hasNext()) 
-        { 	
-        	//System.out.println("start "+i.hasNext());
-        	//System.out.println("current ");
-        	int n = i.next();
-        	/*if(n == startingPoint)
-        	{
-        		visited[n]= false;
-        	}*/
-            //System.out.println("current "+n);
-        	//System.out.println("Inside while loop"+adj[v].toString());
-        	if (!visited[n])
+        { 
+            int n = i.next();
+            //System.out.println(n);
+            if (!visited[n]) 
             {
-            	//System.out.println("has not visited "+n);
-        		DFSUtil(n, visited);
+                DFSUtil(n, visited, alphaVisit, checkList);
             }
-        	if(visited[n])
-        	{
-        		System.out.println(" current v: "+v+" vert "+adj[v].toString());
-        		//System.out.println("next: "+n+" vert "+adj[n].toString());
-        		if(v == startingPoint)
-        		{
-        			isAlpha = true;
-        			System.out.println(true);
-        		}
-        		if(v != startingPoint)
-        		{
-        			isAlpha = false;
-        			System.out.println(false);
-        		}
-        	}
-        	if(isAlpha == false) {
-        		//break;
-        	}
-        } 
+            if(visited[n]) 
+            {
+            	//System.out.println(n);
+            	if((start == n)||Arrays.asList(checkList).contains(n))
+            	{	
+            		global.add(v);
+            		//System.out.println(Arrays.toString(checkList));
+	            	//System.out.println(Arrays.toString(alphaVisit));
+	            	//DFSUtil(start, visited, alphaVisit, checkList);
+	            	
+	            }
+            	
+            }
+            	
+        }
+        
+           
+         
     } 
   
     // The function to do DFS traversal. It uses recursive DFSUtil() 
-    void search(int v) 
+    void DFS(int v) 
     { 
         // Mark all the vertices as not visited(set as 
         // false by default in java) 
-        boolean visited[] = new boolean[V]; 
-  
+        boolean visited[] = new boolean[V];
+        boolean alphaVisit[] = new boolean[V];
+        int [] checkList = new int[edgeCount+1];
         // Call the recursive helper function to print DFS traversal 
-        DFSUtil(v, visited); 
-    } 
- 	public static ArrayList<String> input() 
+        counter2 = 0;
+        global.clear();
+        DFSUtil(v, visited, alphaVisit,checkList);
+        
+    }
+    public static ArrayList<String> input() 
 	{
 		ArrayList<String> list1 = new ArrayList<String>();
 
-		File file = new File ("input.txt");
+		File file = new File ("input copy.txt");
 		try 
 		{
 			Scanner scan = new Scanner(file);
@@ -310,76 +113,108 @@ class test
 		}
 		return list1;
 	}
-	public static ArrayList<Integer> format()
+    public static ArrayList<Integer> format()
 	{
 		ArrayList<String> string = input();
 		ArrayList<Integer> numberList = new ArrayList<Integer>();
-		for(int i = 1; i<string.size();i++) 
-		{
+		for(int i = 1; i<string.size();i++) {
 			String test = string.get(i);
 			String numbers[] = test.split(",");
 			numberList.add(Integer.parseInt(numbers[0]));
 			numberList.add(Integer.parseInt(numbers[1]));
-			
 		}
 		return numberList;
 	}
-	public static <Integer> ArrayList<Integer> removeDuplicates(ArrayList<Integer> list) 
-    { 
-  
-        // Create a new ArrayList
-        ArrayList<Integer> newList = new ArrayList<Integer>(); 
-  
-        // Traverse through the first list 
-        for (Integer element : list) { 
-  
-            // If this element is not present in newList 
-            // then add it 
-            if (!newList.contains(element)) { 
-  
-                newList.add(element); 
-            } 
-        } 
-  
-        // return the new list 
-        return newList; 
-    } 
-	
+      
  // Driver method to 
  public static void main(String args[]) 
  { 
 	 ArrayList<Integer> inst = format();
      ArrayList<Integer> answer = new ArrayList<Integer>();
-     int edgeCount = Integer.parseInt(input().get(0));
+     boolean isAlpha = false;
      test g = new test(edgeCount+1); 
      for(int i = 1; i<inst.size();i+=2)
      {
-  		g.add(inst.get(i-1), inst.get(i));
+    	 g.addEdge(inst.get(i-1), inst.get(i));
      }
-     ArrayList<Integer> newList = removeDuplicates(nodes);
-     Collections.sort(newList);
-     /*for(int i = 0; i<newList.size();i++)
-  	 {
-  		startingPoint = newList.get(i);
-  		System.out.println("start: "+startingPoint);
-  		g.search(newList.get(i));
-    	System.out.println("------------------------");
-    	if(isanswer == true) 
+     for(int i = 1; i<=edgeCount;i++) 
+     {
+    	 start = i;
+    	 g.DFS(i);
+    	 counter1++;
+    	 ArrayList<Integer> temp = new ArrayList<Integer>();
+         for(int j = 1; arr[0][j]!=0; j++)
+         {
+        	if(!global.contains(arr[0][j]))
+        	{
+        	 	temp.add(arr[0][j]);
+        	}
+        	 
+         }
+    	 
+         //System.out.println(Arrays.deepToString(arr));
+         //System.out.println(temp);
+     }
+     start = 144;
+     g.DFS(144);
+     System.out.println(global);
+     ArrayList<Integer> temp = new ArrayList<Integer>();
+     //System.out.println(global);
+     for(int i = 0; arr[start-1][i]!=0; i++)
+     {
+    	if(!global.contains(arr[start-1][i]))
     	{
-    		answer.add(newList.get(i));
+    	 	temp.add(arr[start-1][i]);
     	}
-  	 }*/
-     startingPoint = 1;
-     System.out.println("start: "+startingPoint);
-     g.search(144);
-     if(isanswer) {
-    	 answer.add(144);
+    	 
      }
-     System.out.println(done);
-     //System.out.println(newList);
-     //g.search(144);
-     //System.out.println(isAlpha);
+     temp.remove(new Integer(start));
+     for(int t = 0;t<temp.size();t++) 
+     {
+    	 for(int gl = 0; gl<global.size();gl++) 
+    	 {
+    		 for(int d = 0;d<edgeCount;d++ ) 
+    		 {
+    			//System.out.println("gl: "+global.get(gl)+":"+arr[temp.get(t)-1][d]);
+	    		if(temp.size()==1)
+	    		{
+	    			t = 0;
+    			 	if(global.get(gl)==arr[temp.get(t)-1][d]) 
+	    			 {
+	     				System.out.println(t);
+	     				System.out.println("remove"+temp.get(t));
+	    				temp.remove(new Integer (temp.get(t)));
+	    				System.out.println(temp);
+	    				
+	    				
+	    			 }
+    			 	
+	    		}
+	    		else if(temp.size()==0)
+	    		{
+	    			answer.add(start);
+	    			break;
+	    		}
+	    		
+	    		else
+	    		{
+	    			if(global.get(gl)==arr[temp.get(t)-1][d]) 
+	    			 {
+	     				System.out.println(t);
+	     				System.out.println("remove"+temp.get(t));
+	    				temp.remove(new Integer (temp.get(t)));
+	    				System.out.println(temp);
+	    				
+	    				
+	    			 }
+	    		}
+    			 	
+    		 }
+    	 }
+     }
+     //System.out.println(Arrays.deepToString(arr));
+     System.out.println(temp);
      System.out.println(answer);
      
  }
-}
+} 
