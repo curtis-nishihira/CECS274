@@ -1,0 +1,302 @@
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+/**
+   This class implements a hash set using separate chaining.
+*/
+public class HashSet
+{
+   private Node[] buckets;
+   private int currentSize;
+
+   /**
+      Constructs a hash table.
+      @param bucketsLength the length of the buckets array
+   */
+   public HashSet(int bucketsLength)
+   {
+      buckets = new Node[bucketsLength];
+      currentSize = 0;
+   }
+   public String toString() {
+       Iterator i = iterator();
+       String temp="";
+       while (i.hasNext()) {
+           temp=temp+" "+i.next().toString();
+       }
+     return temp;
+   }
+
+
+   /**
+      Tests for set membership.
+      @param x an object
+      @return true if x is an element of this set
+   */
+   public boolean contains(Object x)
+   {
+      int h = x.hashCode();
+      if (h < 0) { h = -h; }
+      h = h % buckets.length;
+
+      Node current = buckets[h];
+      while (current != null)
+      {
+         if (current.data.equals(x)) { return true; }
+         current = current.next;
+      }
+      return false;
+   }
+   /**
+   joins to sets together.
+   @param set1 a HashSet
+   @return the resultant set from joining
+*/
+   public HashSet union(HashSet set1) 
+   {
+	  // Declare iterators for the hashsets
+	   Iterator iterator1 = iterator();
+	   Iterator iterator2 = set1.iterator();
+	   HashSet set2 = new HashSet(currentSize);
+	  // Utilize while loops to access elements
+	   while (iterator1.hasNext()) 
+	   {
+		   set2.add(iterator2.next());
+	   }
+	   while (iterator2.hasNext()) 
+	   {
+		   set2.add(iterator2.next());
+	   }
+	   return set2;
+   }
+   /**
+   Combines two sets after intersecting 
+   @param set2 a HashSet
+   @return the final set after intersection
+*/
+   public HashSet intersect(HashSet set1) 
+   {
+	// Declare iterators for the hashsets
+	   Iterator iterator1 = iterator(); 
+	   HashSet set2 = new HashSet(currentSize);
+	 // Declare object to hold values
+	   Object object;
+	// Utilize while loops to access elements
+	   while (iterator1.hasNext()) 
+	   {
+		   object = iterator1.next();
+		   if (set1.contains(object))
+		   {
+			   set2.add(object);
+		   }
+	   }
+	   return set2;
+   }
+   /**
+   returns the difference between two sets
+   @param set1 a HashSet
+   @return the final set after difference
+*/
+   public HashSet difference(HashSet set1) {
+		// Declare iterators for the hashsets
+	   Iterator iterator1 = iterator();  
+	   HashSet set2 = new HashSet(currentSize);
+		 // Declare object to hold values
+	   Object object;
+		// Utilize while loops to access elements
+	   while (iterator1.hasNext()) {
+		   object = iterator1.next();
+		   if (set1.contains(object) == false) {
+			   set2.add(object);
+		   }
+	   }
+	   return set2;
+   }
+   /**
+      Adds an element to this set.
+      @param x an object
+      @return true if x is a new object, false if x was
+      already in the set
+   */
+   public boolean add(Object x)
+   {
+      int h = x.hashCode();
+      if (h < 0) { h = -h; }
+      h = h % buckets.length;
+
+      Node current = buckets[h];
+      while (current != null)
+      {
+         if (current.data.equals(x)) { return false; }
+            // Already in the set
+         current = current.next;
+      }
+      Node newNode = new Node();
+      newNode.data = x;
+      newNode.next = buckets[h];
+      buckets[h] = newNode;
+      currentSize++;
+      return true;
+   }
+
+   /**
+      Removes an object from this set.
+      @param x an object
+      @return true if x was removed from this set, false
+      if x was not an element of this set
+   */
+   public boolean remove(Object x)
+   {
+      int h = x.hashCode();
+      if (h < 0) { h = -h; }
+      h = h % buckets.length;
+
+      Node current = buckets[h];
+      Node previous = null;
+      while (current != null)
+      {
+         if (current.data.equals(x))
+         {
+            if (previous == null) { buckets[h] = current.next; }
+            else { previous.next = current.next; }
+            currentSize--;
+            return true;
+         }
+         previous = current;
+         current = current.next;
+      }
+      return false;
+   }
+
+   /**
+      Returns an iterator that traverses the elements of this set.
+      @return a hash set iterator
+   */
+   public Iterator iterator()
+   {
+      return new HashSetIterator();
+   }
+
+   /**
+      Gets the number of elements in this set.
+      @return the number of elements
+   */
+   public int size()
+   {
+      return currentSize;
+   }
+
+   class Node
+   {
+      public Object data;
+      public Node next;
+   }
+
+   class HashSetIterator implements Iterator
+   {
+      private int bucketIndex;
+      private Node current;
+
+      /**
+         Constructs a hash set iterator that points to the
+         first element of the hash set.
+      */
+      public HashSetIterator()
+      {
+         current = null;
+         bucketIndex = -1;
+      }
+
+      public boolean hasNext()
+      {
+         if (current != null && current.next != null) { return true; }
+         for (int b = bucketIndex + 1; b < buckets.length; b++)
+         {
+            if (buckets[b] != null) { return true; }
+         }
+         return false;
+      }
+
+      public Object next()
+      {
+         if (current != null && current.next != null)
+         {
+            current = current.next; // Move to next element in bucket
+         }
+         else // Move to next bucket
+         {
+            do
+            {
+               bucketIndex++;
+               if (bucketIndex == buckets.length)
+               {
+                  throw new NoSuchElementException();
+               }
+               current = buckets[bucketIndex];
+            }
+            while (current == null);
+         }
+         return current.data;
+      }
+
+      public void remove()
+      {
+         throw new UnsupportedOperationException();
+      }
+   }
+}
+
+public class demo {
+	public static void main(String[]args) {
+		HashSet set = new HashSet(6);
+		Object person1 = new Object();
+		Object person2 = new Object();
+		Object person3 = new Object();
+		Object person4 = new Object();
+		Object person5 = new Object();
+		person1 = "Annie";
+		person2 = "Ron";
+		person3 = "Lanie";
+		person4 = "Brayan";
+		person5 = "Brian";
+		set.add(person1);
+		set.add(person2);
+		set.add(person3);
+		set.add(person4);
+		set.add(person5);
+		System.out.println("set1: "+set.toString());
+		HashSet set2 = new HashSet(5);
+		Object person6 = new Object();
+		Object person7 = new Object();
+		Object person8 = new Object();
+		Object person9 = new Object();
+		Object person10 = new Object();
+		person6 = "Brayan";
+		person7 = "Larry";
+		person8 = "Carlos";
+		person9 = "Sheldon";
+		person10 = "Brian";
+		set2.add(person6);
+		set2.add(person7);
+		set2.add(person8);
+		set2.add(person9);
+		set2.add(person10);
+		System.out.println("set2: "+set2.toString());
+		HashSet set3 = new HashSet(4);
+		Object person11 = new Object();
+		person11 = "Carlos";
+		set3.add(person11);
+		System.out.println("set3: "+set3.toString());
+		HashSet set4 = new HashSet(1);
+		Object person12 = new Object();
+		person12 = "Hailey";
+		set4.add(person12);
+		HashSet set5 = new HashSet(1);
+		set5.add(person12);
+		System.out.println("set4: "+set4.toString());
+		System.out.println("set5: "+set5.toString());
+		System.out.println("intersection of set1 & set2: "+set.intersect(set2));
+		System.out.println("union of set4 & set5: "+set4.union(set5));
+		System.out.println("difference of set2 & set4: "+set2.difference(set4));
+	}
+}
