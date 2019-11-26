@@ -1,7 +1,9 @@
-package tester;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,94 +14,86 @@ import java.util.Scanner;
   
 // A directed graph using 
 // adjacency list representation 
-public class test {
+public class chimps {
 	public int temp;
 	private int V;   // No. of vertices
 	public static int edgeCount=Integer.parseInt(input().get(0));
 	public static int counter1= 0;
 	public static int counter2 = 0;
+	public static int counter3 = 0;
 	public static int start = 0;
-	static int [][] arr = new int[edgeCount+1][edgeCount];
-	public static ArrayList<Integer> global = new ArrayList<Integer>();
+	static int [][] edges = new int[edgeCount][edgeCount];
+	static int [][] paths = new int[edgeCount][edgeCount];
 	  
     // Array  of lists for Adjacency List Representation 
-    private LinkedList<Integer> adj[]; 
+    private LinkedList<Integer> adjacent[]; 
   
     // Constructor 
-    test(int v) 
+    chimps(int v) 
     { 
         V = v; 
-        adj = new LinkedList[v]; 
+        adjacent = new LinkedList[v]; 
         for (int i=0; i<v; ++i) 
-            adj[i] = new LinkedList(); 
+        {
+            adjacent[i] = new LinkedList(); 
+        }
     } 
   
     //Function to add an edge into the graph 
-    void addEdge(int v, int w) 
+    void addEdge(int v, int a) 
     { 
-        adj[v].add(w);  // Add w to v's list. 
+        adjacent[v].add(a);  // Add w to v's list. 
     } 
   
     // A function used by DFS 
-    void DFSUtil(int v,boolean visited[],boolean alphaVisit[], int [] checkList) 
+    void searchHelp(int v,boolean visited[]) 
     { 
         // Mark the current node as visited and print it 
     	visited[v] = true;
-    	//System.out.println("visited: "+v);
-        temp = v;
-        arr[counter1][counter2] = v;
-        counter2++;
-        //}
-  
+
+    	temp = v;
+    	edges[counter1][counter2] = v;
+    	counter2++;
+          
         // Recur for all the vertices adjacent to this vertex 
-        Iterator<Integer> i = adj[v].listIterator(); 
-        while (i.hasNext()) 
+        Iterator<Integer> iterator = adjacent[v].listIterator(); 
+        while (iterator.hasNext()) 
         { 
-            int n = i.next();
-            //System.out.println(n);
-            if (!visited[n]) 
+            int next = iterator.next();
+            if (!visited[next]) 
             {
-                DFSUtil(n, visited, alphaVisit, checkList);
+                searchHelp(next, visited);
             }
-            if(visited[n]) 
+            if(visited[next]) 
             {
             	//System.out.println(n);
-            	if((start == n)||Arrays.asList(checkList).contains(n))
+            	if((start == next))
             	{	
-            		global.add(v);
-            		//System.out.println(Arrays.toString(checkList));
-	            	//System.out.println(Arrays.toString(alphaVisit));
-	            	//DFSUtil(start, visited, alphaVisit, checkList);
-	            	
-	            }
-            	
+            		paths[counter1][counter3]=v;
+            		counter3++;
+            	}	
             }
-            	
-        }
-        
-           
-         
+        }   
     } 
   
     // The function to do DFS traversal. It uses recursive DFSUtil() 
-    void DFS(int v) 
+    void search(int v) 
     { 
         // Mark all the vertices as not visited(set as 
         // false by default in java) 
         boolean visited[] = new boolean[V];
-        boolean alphaVisit[] = new boolean[V];
-        int [] checkList = new int[edgeCount+1];
         // Call the recursive helper function to print DFS traversal 
         counter2 = 0;
-        global.clear();
-        DFSUtil(v, visited, alphaVisit,checkList);
-        
+        counter3 = 0;
+        searchHelp(v, visited);
+     
     }
+    
     public static ArrayList<String> input() 
 	{
 		ArrayList<String> list1 = new ArrayList<String>();
 
-		File file = new File ("input copy.txt");
+		File file = new File ("input1.txt");
 		try 
 		{
 			Scanner scan = new Scanner(file);
@@ -113,17 +107,44 @@ public class test {
 		}
 		return list1;
 	}
+    
     public static ArrayList<Integer> format()
 	{
 		ArrayList<String> string = input();
 		ArrayList<Integer> numberList = new ArrayList<Integer>();
 		for(int i = 1; i<string.size();i++) {
-			String test = string.get(i);
-			String numbers[] = test.split(",");
+			String chimps = string.get(i);
+			String numbers[] = chimps.split(",");
 			numberList.add(Integer.parseInt(numbers[0]));
 			numberList.add(Integer.parseInt(numbers[1]));
 		}
 		return numberList;
+	}
+    public static void output(int[][]array)
+	{
+		File file = new File("output.txt");
+		FileOutputStream stream = null;
+		try {
+			stream = new FileOutputStream(file);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		PrintWriter writer = new PrintWriter(stream);
+		/*for(int i = 0; i<edgeCount; i++)
+		 {
+		     for(int j = 0; j<edgeCount; j++)
+		     {
+		         writer.print(edges[i][j]+",");
+		     }
+		     writer.println();
+		 }*/
+		writer.print(Arrays.deepToString(array));
+		writer.close();
+		try {
+			stream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
       
  // Driver method to 
@@ -131,90 +152,113 @@ public class test {
  { 
 	 ArrayList<Integer> inst = format();
      ArrayList<Integer> answer = new ArrayList<Integer>();
-     boolean isAlpha = false;
-     test g = new test(edgeCount+1); 
+     chimps g = new chimps(edgeCount+1); 
+     // Build my Graph
      for(int i = 1; i<inst.size();i+=2)
      {
     	 g.addEdge(inst.get(i-1), inst.get(i));
      }
+     // Build my Library
      for(int i = 1; i<=edgeCount;i++) 
      {
     	 start = i;
-    	 g.DFS(i);
+    	 g.search(i);
     	 counter1++;
-    	 ArrayList<Integer> temp = new ArrayList<Integer>();
-         for(int j = 1; arr[0][j]!=0; j++)
-         {
-        	if(!global.contains(arr[0][j]))
-        	{
-        	 	temp.add(arr[0][j]);
-        	}
-        	 
-         }
-    	 
-         //System.out.println(Arrays.deepToString(arr));
-         //System.out.println(temp);
      }
-     start = 144;
-     g.DFS(144);
-     System.out.println(global);
-     ArrayList<Integer> temp = new ArrayList<Integer>();
-     //System.out.println(global);
-     for(int i = 0; arr[start-1][i]!=0; i++)
+     System.out.println("edges before removal "+Arrays.deepToString(edges));
+     System.out.println("paths before removal "+Arrays.deepToString(paths));
+     // Ignore any nodes with no paths back to itself
+     for(int i = 0; i<edgeCount; i++) 
      {
-    	if(!global.contains(arr[start-1][i]))
-    	{
-    	 	temp.add(arr[start-1][i]);
-    	}
-    	 
-     }
-     temp.remove(new Integer(start));
-     for(int t = 0;t<temp.size();t++) 
-     {
-    	 for(int gl = 0; gl<global.size();gl++) 
+    	 if(paths[i][0]==0)
     	 {
-    		 for(int d = 0;d<edgeCount;d++ ) 
-    		 {
-    			//System.out.println("gl: "+global.get(gl)+":"+arr[temp.get(t)-1][d]);
-	    		if(temp.size()==1)
-	    		{
-	    			t = 0;
-    			 	if(global.get(gl)==arr[temp.get(t)-1][d]) 
-	    			 {
-	     				System.out.println(t);
-	     				System.out.println("remove"+temp.get(t));
-	    				temp.remove(new Integer (temp.get(t)));
-	    				System.out.println(temp);
-	    				
-	    				
-	    			 }
-    			 	
-	    		}
-	    		else if(temp.size()==0)
-	    		{
-	    			answer.add(start);
-	    			break;
-	    		}
-	    		
-	    		else
-	    		{
-	    			if(global.get(gl)==arr[temp.get(t)-1][d]) 
-	    			 {
-	     				System.out.println(t);
-	     				System.out.println("remove"+temp.get(t));
-	    				temp.remove(new Integer (temp.get(t)));
-	    				System.out.println(temp);
-	    				
-	    				
-	    			 }
-	    		}
-    			 	
-    		 }
+    		 edges[i][0]=0;
     	 }
      }
-     //System.out.println(Arrays.deepToString(arr));
-     System.out.println(temp);
-     System.out.println(answer);
+     // removes the values that connect to each node from nodes DFS
+	 for(int edge = 0; edge<edgeCount; edge++) 
+     {
+		 for(int path = 0; path<edgeCount; path++) 
+    	 {
+    		 for(int i = 0;i<edgeCount;i++ ) 
+    		 {
+    			 if(paths[path][edge]==edges[path][i]&&paths[path][edge]!=0)
+    			 {
+    				 if(i!=0)
+    				 {
+    				 edges[path][i]=0;
+    				 }
+    			 }
+    		 }
+ 
+    	 }
+     }
+	 System.out.println("edges before 2nd removal"+Arrays.deepToString(edges));
+     System.out.println("paths before 2nd removal"+Arrays.deepToString(paths));
+     // check secondary level     s
+	 for(int edge = 0; edge<edgeCount; edge++) 
+     {
+		 for(int i = 1;i<edgeCount;i++ ) 
+		 {
+			if(edges[edge][0]!=0)
+			{
+				//System.out.println(edges[edge][i]+":"+edges[edges[edge][i]-1][i]);
+				if(edges[edge][i]!=0) 
+				{
+					for(int j = 0; j<edgeCount;j++) 
+					{
+						if(paths[edges[edge][i]-1][j]==paths[edge][i])
+						{
+							// double check it runs
+							if(paths[edges[edge][i]-1][j]!=0)
+							{
+								for(int k = 0; k<edgeCount;k++)
+								{
+									if(paths[edge][k]==0)
+									{
+										paths[edge][k]=paths[edges[edge][i]-1][j];
+										//System.out.println(paths[edge][k]);
+										break;
+									}	
+								}
+							}
+						}
+					}
+				}
+			}
+		 }
+     }
+	 System.out.println("edges after "+Arrays.deepToString(edges));
+	 //output(edges);
+     System.out.println("paths after "+Arrays.deepToString(paths));
+     // Final Check
+     for(int edge = 0; edge<edgeCount; edge++) 
+     {
+    	 boolean check = true;
+    	 for(int i = 1; i<edgeCount;i++)
+    	 {
+    	 	if(edges[edge][0]==edge+1)
+    	 	{
+    			 if(edges[edge][i]!=0)
+    			 {
+    				 check = false;
+    				 break;
+    			 }
+	    	 }
+    	 	else
+    	 	{
+    	 		check=false;
+    	 		break;
+    	 	}
+    	 }
+    	 if(check) {
+    		 answer.add(edge+1);
+    	 }
+    	 
+     }
      
+
+     System.out.println(answer);
  }
+ 
 } 
