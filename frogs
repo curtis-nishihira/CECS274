@@ -106,6 +106,8 @@ public class PictureFrogs
 	    }
 	    //int first = 0;
 	    // for the alternating at first
+	    // if the signs at the beginning are the same then alternate until next sign is different
+	    
     	for(int first=0;first<tempCharList.size();first++)
     	{
 			if(tempCharList.get(0)==tempCharList.get(first))
@@ -122,6 +124,9 @@ public class PictureFrogs
 	    }
 	    // for the alternating after change
     	// both should be preset to opposite before change 
+    	// checks first if different
+    	// checks next two to see if same
+    	// while same same every odd flip
 	    totalAnswer[frogs]=answer;
 	    for(int check = 0; check<tempCharList.size()-3;check++)
 	    {
@@ -148,10 +153,10 @@ public class PictureFrogs
 	    		}
 	    	}
 	    }
-
+	    // initalizes the sum
 	    int sum = answer[0];
-	    //boolean right = true;
-
+	    	// runs for each of the frog answers to track sum and flip if need to also readjust sum
+	    	// exits sum check if not right
 	    	for(int i = 1; i<answer.length;i++) 
 			    {
 			    	sum = sum+answer[i];
