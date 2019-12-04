@@ -1,0 +1,267 @@
+/**
+   This class implements a binary search tree whose
+   nodes hold objects that implement the Comparable
+   interface.
+*/
+public class BinarySearchTree
+{  
+   private Node root;
+
+   /**
+      Constructs an empty tree.
+   */
+   public BinarySearchTree()
+   {  
+      root = null;
+   }
+   
+   /**
+      Inserts a new node into the tree.
+      @param obj the object to insert
+   */
+   public void add(Comparable obj) 
+   {  
+      Node newNode = new Node();
+      newNode.data = obj;
+      newNode.left = null;
+      newNode.right = null;
+      if (root == null) { root = newNode; }
+      else { root.addNode(newNode); }
+   }
+
+   /**
+      Tries to find an object in the tree.
+      @param obj the object to find
+      @return true if the object is contained in the tree
+   */
+   public boolean find(Comparable obj)
+   {
+      Node current = root;
+      while (current != null)
+      {
+         int d = current.data.compareTo(obj);
+         if (d == 0) { return true; }
+         else if (d > 0) { current = current.left; }
+         else { current = current.right; }
+      }
+      return false;
+   }
+   
+   /**
+      Tries to remove an object from the tree. Does nothing
+      if the object is not contained in the tree.
+      @param obj the object to remove
+   */
+   public void remove(Comparable obj)
+   {
+      // Find node to be removed
+
+      Node toBeRemoved = root;
+      Node parent = null;
+      boolean found = false;
+      while (!found && toBeRemoved != null)
+      {
+         int d = toBeRemoved.data.compareTo(obj);
+         if (d == 0) { found = true; }
+         else 
+         {
+            parent = toBeRemoved;
+            if (d > 0) { toBeRemoved = toBeRemoved.left; }
+            else { toBeRemoved = toBeRemoved.right; }
+         }
+      }
+
+      if (!found) { return; }
+
+      // toBeRemoved contains obj
+
+      // If one of the children is empty, use the other
+
+      if (toBeRemoved.left == null || toBeRemoved.right == null)
+      {
+         Node newChild;
+         if (toBeRemoved.left == null) 
+         {
+            newChild = toBeRemoved.right;
+         }
+         else 
+         {
+            newChild = toBeRemoved.left;
+         }
+
+         if (parent == null) // Found in root
+         {
+            root = newChild;
+         }
+         else if (parent.left == toBeRemoved)
+         {
+            parent.left = newChild;
+         }
+         else 
+         {
+            parent.right = newChild;
+         }
+         return;
+      }
+      
+      // Neither subtree is empty
+
+      // Find smallest element of the right subtree
+
+      Node smallestParent = toBeRemoved;
+      Node smallest = toBeRemoved.right;
+      while (smallest.left != null)
+      {
+         smallestParent = smallest;
+         smallest = smallest.left;
+      }
+
+      // smallest contains smallest child in right subtree
+         
+      // Move contents, unlink child
+
+      toBeRemoved.data = smallest.data;
+      if (smallestParent == toBeRemoved) 
+      {
+         smallestParent.right = smallest.right; 
+      }
+      else 
+      {
+         smallestParent.left = smallest.right; 
+      }
+   }
+   
+   /**
+      Prints the contents of the tree in sorted order.
+   */
+   public void print()
+   {  
+      print(root);
+      System.out.println();
+   }  
+
+   /**
+      Prints a node and all of its descendants in sorted order.
+      @param parent the root of the subtree to print
+   */
+   private static void print(Node parent)
+   {  
+      if (parent == null) { return; }
+      print(parent.left);
+      System.out.print(parent.data + " ");
+      print(parent.right);
+   }
+   public Author findMin(Node n) 
+   {
+       // if it last node than return its data as left most node will be the min element
+       if(n.left==null) 
+       {
+           return (Author)n.data;
+       }
+       return findMin(n.left);
+   }
+   public Author findMax(Node n) 
+   {
+       // if it last node than return its data as roght most node will be the max element
+       if(n.right==null) 
+       {
+           return (Author)n.data;
+       }
+       return findMax(n.right);
+   }
+
+   /**
+      A node of a tree stores a data item and references
+      to the left and right child nodes.
+   */
+   
+   class Node
+   {  
+      public Comparable data;
+      public Node left;
+      public Node right;
+
+      /**
+         Inserts a new node as a descendant of this node.
+         @param newNode the node to insert
+      */
+      public void addNode(Node newNode)
+      {  
+         int comp = newNode.data.compareTo(data);
+         if (comp < 0)
+         {  
+            if (left == null) { left = newNode; }
+            else { left.addNode(newNode); }
+         }
+         else if (comp > 0)
+         {  
+            if (right == null) { right = newNode; }
+            else { right.addNode(newNode); }
+         }
+      }
+   }
+   static /* This class is used to illustrate the Comparable interface */
+   /* It also overrides equals(),hashCode(), toString() */
+
+   class Author implements Comparable<Author>{
+       String firstName;
+       String lastName;
+   /* Constructor */
+       public Author(String inlast, String infirst) {
+   		lastName=inlast;
+   		firstName=infirst;
+
+   	}
+
+   // compareTo should return < 0 if this is supposed to be
+   // less than other, > 0 if this is supposed to be greater than
+   // other and 0 if they are supposed to be equal
+       public int compareTo(Author other){
+                   if (this.lastName.equals(other.lastName))
+   			return (this.firstName.compareTo(other.firstName));
+   		else
+   			return (this.lastName.compareTo(other.lastName));
+       }
+
+   /* equals() returns true if both the lastname and the firstname are the same */
+       public boolean equals(Author other) {
+   		if (this.lastName.equals(other.lastName) &&
+   			this.firstName.equals(other.firstName))
+   			return true;
+   		else
+   			return false;
+   	}
+
+   	/* hashCode() returns the sum of the individual Strings' hashCode() values */
+   	public int hashCode() {
+   		return lastName.hashCode()+firstName.hashCode();
+   	}
+
+   	public String toString() {
+   		return "The author's name is: " + firstName + " " + lastName;
+   	}
+
+   	public static void main (String [] args) {
+   		Author auth1 = new Author("Wells","Herbert");
+   		Author auth2 = new Author("Verne","Jules");
+   		Author auth3 = new Author("Verne","Jules");
+   		Author auth4 = new Author("Brayan","Fuentes");
+   		System.out.println("compareTo(1 to 2): " + auth1.compareTo(auth2));
+   		System.out.println("compareTo(2 to 1): " + auth2.compareTo(auth1));
+   		System.out.println("equals(1 to 2): " + auth1.equals(auth2));
+   		System.out.println("compareTo(2 to 3): " + auth1.compareTo(auth2));
+   		System.out.println("equals(2 to 3): " + auth2.equals(auth3));
+   		System.out.println("hashCode(1): " + auth1.hashCode());
+   		System.out.println("hashCode(2): " + auth2.hashCode());
+   		System.out.println("hashCode(3): " + auth3.hashCode());
+   		System.out.println(auth1);
+   		BinarySearchTree tree = new BinarySearchTree();
+   		tree.add(auth1);
+   		tree.add(auth2);
+   		tree.add(auth3);
+   		tree.add(auth4);
+   		System.out.println(tree.findMax(tree.root));
+   		System.out.println(tree.findMin(tree.root));
+   	}
+   }
+}
